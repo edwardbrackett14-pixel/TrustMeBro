@@ -10,11 +10,20 @@ export default definePlugin({
     name: "TrustMeBro",
     description: "Bypasses Discord’s age verification required under the UK Online Safety Act.",
     authors: [{ name: "Menhera.st Team", id: 1325012503419420734n }],
+import { definePlugin } from "@vencord/types";
+import { webpack } from "@vencord/webpack";
 
-    start() {
-        const modules = Object.values((window as any).webpackChunkdiscord_app.push([[Symbol()], {}, (r: any) => r.c])) as any[];
-        const userStore = modules.find((x: any) => x?.exports?.default?.getCurrentUser);
-        const currentUser = userStore.exports.default.getCurrentUser();
-        currentUser.ageVerificationStatus = 3;
-    }
+export default definePlugin({
+    name: "TrustMeBro",
+    description: "Bypasses Discord regional age verification checks.",
+    authors: [{ name: "BoccchiChan", id: 0n }],
+    patches: [
+        {
+            find: "getCurrentUser",
+            replacement: {
+                match: /getCurrentUser\(\)\{/g,
+                replace: "$&setTimeout(()=>{const u=this.getCurrentUser();if(u){u.nsfwAllowed=true;u.flags|=1048576;u.personalizationAndDataMarketplaceEngagementAlpha=true;}},0);"
+            }
+        }
+    ]
 });
